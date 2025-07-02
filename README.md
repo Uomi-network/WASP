@@ -190,13 +190,15 @@ Built-in debugging features:
 
 ### Host Functions
 
-| Function | Description |
-|----------|-------------|
-| `get_input()` | Read input data |
-| `set_output()` | Set output data |
-| `call_service_api()` | Make API calls with retry support |
-| `get_file_from_cid()` | Fetch IPFS content |
-| `log()` | Debug logging |
+| Function            | Description                              |
+|---------------------|------------------------------------------|
+| `get_input_data()`  | Read input data                          |
+| `set_output()`      | Set output data                          |
+| `call_ai()`         | Make AI API calls with retry support      |
+| `console_log()`     | Debug logging                            |
+| `get_cid_file()`    | Fetch IPFS content                       |
+| `get_input_file()`  | Read input file                          |
+| `read_chain_state()`| Read chain state data from the blockchain |
 
 ## Compiled WASM
 
