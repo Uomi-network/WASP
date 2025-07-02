@@ -7,7 +7,8 @@
           "Content-Type": "application/json",
           "Accept": "application/json",
           "User-Agent": "UOMI-Client/1.0"
-      }
+      },
+      "chain_rpc_url": "https://finney.uomi.ai"
   },
   "models": {
       "1": {

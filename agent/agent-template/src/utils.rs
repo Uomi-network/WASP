@@ -9,6 +9,7 @@ extern "C" {
     fn call_ai(model: i32, ptr: i32, len: i32, output_ptr: i32, output_len: i32);
     fn get_cid_file(ptr: i32, len: i32, output_ptr: i32, output_len: i32);
     fn get_input_file(ptr: i32, len: i32);
+    fn read_chain_state(pallet_ptr: i32, pallet_len: i32, storage_ptr: i32, storage_len: i32, key_ptr: i32, key_len: i32, output_ptr: i32, output_len: i32);
 }
 
 pub fn parse_messages(input: &[u8]) -> Vec<Message> {
@@ -92,6 +93,20 @@ pub fn get_cid_file_service(cid: Vec<u8>) -> Vec<u8> {
         );
     }
 
+    extract_wasm_data(response)
+}
+#[allow(dead_code)]
+pub fn read_chain_state_service(pallet: &str, storage: &str, key: Option<&str>) -> Vec<u8> {
+    let mut response = vec![0u8; MAX_INPUT_SIZE + 4];
+    let key_bytes = key.unwrap_or("").as_bytes();
+    unsafe {
+        read_chain_state(
+            pallet.as_ptr() as i32, pallet.len() as i32,
+            storage.as_ptr() as i32, storage.len() as i32,
+            key_bytes.as_ptr() as i32, key_bytes.len() as i32,
+            response.as_mut_ptr() as i32, response.len() as i32
+        );
+    }
     extract_wasm_data(response)
 }
 

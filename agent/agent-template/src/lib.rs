@@ -33,6 +33,14 @@ pub extern "C" fn run() {
         //transform the messages into a json string and add "messages" key, this is for the LLM model
         let modified_messages_str = format!("{{\"messages\": {}}}", serde_json::to_string(&modified_messages).unwrap());
 
+        let pallet = "UomiEngine";
+        let storage = "AIModels";
+        let key = "1";
+
+        let chain_state_data = utils::read_chain_state_service(pallet, storage, Some(key));
+
+        log(&format!("Chain state data: {:?}", chain_state_data));
+
         let request = utils::prepare_request(&modified_messages_str);
         //call the service offchain
         let response = utils::call_ai_service(1, request);
