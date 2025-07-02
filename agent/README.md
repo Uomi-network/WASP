@@ -96,6 +96,9 @@ prepare_request(body: &str) -> Vec<u8>                    // Format API request
 // IPFS Operations
 get_cid_file_service(cid: Vec<u8>) -> Vec<u8>  // Fetch IPFS content
 
+// Read Chain State
+read_chain_state() -> Vec<u8>  // Read blockchain state data
+
 // Development Tools
 log(message: &str)  // Console logging
 ```
