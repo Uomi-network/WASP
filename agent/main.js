@@ -7,7 +7,7 @@ import readline from "readline";
 const CONFIG = {
   inputPath: path.join("host", "src", "input.txt"),
   outputPath: path.join("host", "src", "output.txt"),
-  buildScript: "sh ./bin/build_and_run_host.sh",
+  buildScript: "bash ./bin/build_and_run_host.sh",
 };
 
 // Console colors
