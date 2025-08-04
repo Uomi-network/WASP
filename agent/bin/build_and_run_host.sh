@@ -1,3 +1,4 @@
+#!/bin/bash
 cd agent-template 
 cargo build --target wasm32-unknown-unknown --release
 cd ..
