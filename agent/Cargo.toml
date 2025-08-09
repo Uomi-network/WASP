@@ -1,9 +1,8 @@
 [workspace]
 members = [
-    "host",
-    "agent-template"
+  "agent-template",
+  "wasm-crate"
 ]
-
 resolver = "2"
 
 [profile.release]
@@ -15,3 +14,4 @@ strip = true
 [profile.dev]
 opt-level = 0
 debug = true
+

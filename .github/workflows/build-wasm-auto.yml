@@ -1,0 +1,50 @@
+name: Build (Workspace + WASM)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find Cargo root
+        id: findroot
+        shell: bash
+        run: |
+          set -e
+          repo="$(pwd)"
+          # 1) prefer workspace Cargo.toml
+          ws="$(grep -rl '^\[workspace\]' --include Cargo.toml "$repo" | head -n1 || true)"
+          if [ -n "$ws" ]; then
+            root="$(dirname "$ws")"
+          else
+            # 2) fallback: first Cargo.toml (e.g., agent/host/Cargo.toml)
+            first="$(git ls-files '**/Cargo.toml' | head -n1 || true)"
+            [ -n "$first" ] || { echo "No Cargo.toml found"; exit 1; }
+            root="$(dirname "$first")"
+          fi
+          echo "root=$root" >> "$GITHUB_OUTPUT"
+          echo "Using Cargo root: $root"
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: .
+          cache-on-failure: true
+
+      - name: Build workspace (release)
+        working-directory: ${{ steps.findroot.outputs.root }}
+        run: |
+          rustup target add wasm32-unknown-unknown || true
+          cargo build --workspace --release --verbose
