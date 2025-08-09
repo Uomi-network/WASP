@@ -1,0 +1,44 @@
+name: Build (Workspace + WASM)
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "**/*.rs"
+      - "**/Cargo.toml"
+      - ".github/workflows/wasm-build.yml"
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - name: Build workspace
+        run: cargo build --workspace --verbose
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Detect & build WASM (cdylib) crates
+        shell: bash
+        run: |
+          set -euo pipefail
+          METADATA=$(cargo metadata --no-deps --format-version=1)
+          mapfile -t CRATES < <(echo "$METADATA" | jq -r '
+            .packages[] | select([.targets[].kind[]] | any(. == "cdylib")) | .name' | sort -u)
+          if [ ${#CRATES[@]} -eq 0 ]; then
+            echo "No cdylib crates detected; skipping wasm build."
+            exit 0
+          fi
+          for c in "${CRATES[@]}"; do
+            echo ">> Building $c for wasm32"
+            cargo build -p "$c" --release --target wasm32-unknown-unknown
+          done
+      - name: Upload .wasm artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm32-artifacts
+          path: target/wasm32-unknown-unknown/release/*.wasm
+          if-no-files-found: ignore
